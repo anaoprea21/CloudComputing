@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Food Actions</title>
+  </head>
+  <body>
+    <h1>Food Actions</h1>
+    <a href="/food/populate">Generate Food Dishes</a><br>
+    <a href="/api/foods">Get Dishes</a><br>
+    <a href="/food/add">Add Food</a><br>
+    <a href="/food/view">View Food</a><br>
+	{% with messages = get_flashed_messages(with_categories=true) %}
+	{% if messages %}
+	<ul>
+	  {% for category, message in messages %}
+	  <li class="{{ category }}">{{ message }}</li>
+	  {% endfor %}
+	</ul>
+	{% endif %}
+	{% endwith %}
+  </body>
+</html>

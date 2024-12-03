@@ -62,5 +62,35 @@ def populate_foods():
     flash("3 new foods have been added successfully!", "success")
     return redirect(url_for("index"))
 
+
+@app.route("/food/add", methods=["GET", "POST"])
+def add_food_route():
+    form = FoodForm()
+    if form.validate_on_submit():
+        food = {
+            "name": form.name.data,
+            "restaurant": form.restaurant.data,
+            "price": form.price.data,
+            "calories": form.calories.data,
+            "category": form.category.data,
+        }
+        Food.add_food(food)
+        return redirect(url_for("index"))
+    return render_template("add_food.html", form=form)
+
+
+@app.route("/food/view", methods=["GET", "POST"])
+def view_food_route():
+    form = ViewFoodForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        return redirect(f"/api/food/{name}")
+
+    return render_template("view_food.html", form=form)
+
+
+api.add_resource(FoodAPI, "/api/food/<string:name>")
+api.add_resource(FoodsAPI, "/api/foods")
+
 if __name__ == "__main__":
     app.run(debug=True)
