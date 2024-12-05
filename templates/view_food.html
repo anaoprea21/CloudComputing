@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="UTF-8">
+	<title>View Food</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  </head>
+  <body>
+	<h1>View Food</h1>
+	<form method="POST">
+	  {{ form.hidden_tag() }}
+	  <div>
+		{{ form.name.label }} 
+		{{ form.name() }}
+		<div id="dropdown" style="border: 1px solid #ccc; display: none; max-height: 200px; overflow-y: auto;"></div>
+		{{ form.submit() }}
+	  </div>
+	</form>
+	<a href="/">Back to Home</a>
+	<script>
+	  $(document).ready(function() {
+		const $input = $("input[name='name']");
+		const $dropdown = $("#dropdown");
+		let foodsCache = [];
+
+		function fetchFoods() {
+		  $.ajax({
+			url: '/api/food',
+			method: 'GET',
+			success: function(data) {
+			  foodCache = data;
+			}
+		  });
+		}
+
+		fetchFoods();
+
+		$input.on('input', function() {
+		  const query = $input.val().toLowerCase();
+
+		  if (query.length > 0) {
+			const filteredFoods = foodsCache.filter(food =>
+			  food.name.includes(query) || food.name.toLowerCase().includes(query)
+			);
+
+			$dropdown.empty();
+
+			if (filteredFoods.length > 0) {
+			  filteredFoods.forEach(food => {
+				const option = `<div style="padding: 5px; cursor: pointer;" data-name="${food.name}">
+								  (${food.name}) ${food.restaurant} ${food.price} ${food.calories} ${food.category}
+								</div>`;
+				$dropdown.append(option);
+			  });
+
+			  $dropdown.show();
+			} else {
+			  $dropdown.hide();
+			}
+		  } else {
+			$dropdown.hide();
+		  }
+		});
+
+		$dropdown.on('click', 'div', function() {
+		  const selectedName= $(this).data('name');
+		  $input.val(selectedName);
+		  $dropdown.hide();
+		});
+	  });
+	</script>
+  </body>
+</html>
