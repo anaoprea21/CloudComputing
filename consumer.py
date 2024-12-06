@@ -45,6 +45,7 @@ def add_food_to_db(food_data):
                     food_data["category"],
                 ),
             )
+            print(f"Received food_data: {food_data}")
             conn.commit()
     finally:
         conn.close()

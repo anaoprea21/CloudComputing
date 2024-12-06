@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_PASSWORD: my-secret-pw
+    ports:
+      - "5432:5432"
+    networks:
+      - my-network
+ 
+  redis:
+    image: redis
+    command: ["redis-server", "--bind", "0.0.0.0"]
+    ports:
+      - "6379:6379"
+    networks:
+      - my-network
+ 
+  rabbitmq:
+    image: rabbitmq
+    ports:
+      - "5672:5672"
+    networks:
+      - my-network
+ 
+  book_api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: "postgres"
+      DB_NAME: "db"
+      DB_USERNAME: "postgres"
+      DB_PASSWORD: "my-secret-pw"
+      REDIS_HOST: "redis"
+      REDIS_DATABASE: "0"
+      RABBITMQ_HOST: "rabbitmq"
+    networks:
+      - my-network
+ 
+  consumer:
+    build: 
+      context: .
+      dockerfile: Dockerfile-consumer
+    environment:
+      DB_HOST: "postgres"
+      DB_NAME: "db"
+      DB_USERNAME: "postgres"
+      DB_PASSWORD: "my-secret-pw"
+      RABBITMQ_HOST: "rabbitmq"
+    networks:
+      - my-network
+ 
+networks:
+  my-network:

@@ -6,29 +6,29 @@ db = SQLAlchemy()
 
 
 class Food(db.Model):
-    tablename = "foods"
+    __tablename__ = "foods"
 
     name = db.Column(db.String(25), primary_key=True)
     restaurant = db.Column(db.String(255), nullable=False)
     price = db.Column(db.Integer, nullable=False)
     calories = db.Column(db.Integer, nullable=False)
-    type = db.Column(db.String(255), nullable=False)
+    category = db.Column(db.String(255), nullable=False)
 
-    def init(self, name, restaurant, price, calories, type):
+    def _init_(self, name, restaurant, price, calories, category):
         self.name = name
         self.restaurant = restaurant
         self.price = price
         self.calories = calories
-        self.type = type
+        self.category = category
 
     @classmethod
     def add_food(cls, food_data):
         food = {
             "name": food_data["name"],
-            "restarant": food_data["restaurat"],
-            "calories": food_data["calories"],
+            "restaurant": food_data["restaurant"],
             "price": food_data["price"],
-            "type": food_data["type"],
+            "calories": food_data["calories"],
+            "category": food_data["category"],
         }
         send_message_to_queue(food)
 
@@ -50,7 +50,7 @@ class Food(db.Model):
             "restaurant": self.restaurant,
             "price": self.price,
             "calories": self.calories,
-            "type": self.type,
+            "category": self.category,
         }
 
 
